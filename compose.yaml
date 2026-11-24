@@ -1,0 +1,9 @@
+services:
+  machine_learning_1:
+    build: ./src/machine_learning_1
+
+  machine_learning_2:
+    build: ./src/machine_learning_2
+
+  machine_learning_3:
+    build: ./src/machine_learning_3
