@@ -1,9 +1,35 @@
 services:
   machine_learning_1:
-    build: ./src/machine_learning_1
+    build:
+      context: .
+      dockerfile: src/machine_learning_1/Dockerfile
 
   machine_learning_2:
-    build: ./src/machine_learning_2
+    build:
+      context: .
+      dockerfile: src/machine_learning_2/Dockerfile
 
   machine_learning_3:
-    build: ./src/machine_learning_3
+    build:
+      context: .
+      dockerfile: src/machine_learning_3/Dockerfile
+
+  eda:
+    build:
+      # context is the project root so the build can see requirements.txt
+      # (which sits next to this compose.yaml)
+      context: .
+      dockerfile_inline: |
+        FROM python:3.11-slim
+        WORKDIR /app
+        COPY requirements.txt .
+        RUN pip install --no-cache-dir -r requirements.txt jupyterlab
+        COPY eda.ipynb .
+    ports:
+      - "127.0.0.1:8888:8888"
+    volumes:
+      - ./eda.ipynb:/app/eda.ipynb
+      - ./data:/app/data
+    command: >
+      jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+      --ServerApp.token='' --ServerApp.password='' --ServerApp.root_dir=/app
