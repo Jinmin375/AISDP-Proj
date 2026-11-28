@@ -1,0 +1,29 @@
+# Pipeline configuration — change values here instead of editing the code.
+
+data:
+  raw_path: data/proj_machine_readings.csv
+  clean_path: data/clean_machine_readings.csv
+  target: maintenance_required
+
+preprocessing:
+  # Machines already in failure (machine_status == 2) always need maintenance.
+  # They are handled by a simple rule and removed before training the model.
+  failed_status_value: 2
+
+  # Columns that leak the target (see EDA section 6) or carry no signal (EDA section 7).
+  drop_columns:
+    - timestamp
+    - machine_id
+    - failure_type
+    - downtime_risk
+    - anomaly_flag
+
+  # Thresholds found in the EDA (section 5 rate-by-bin charts).
+  thresholds:
+    temperature_high: 90        # deg C — above this, maintenance is always required
+    vibration_high: 80          # mm/s  — above this, maintenance is always required
+    rul_critical: 20            # hours — below this, maintenance is always required
+    rul_warning: 50             # hours — anomalies only happen below this
+
+  # Strategy used to fill missing temperature values ("median" or "mean").
+  impute_strategy: median
